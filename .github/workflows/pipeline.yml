@@ -1,0 +1,51 @@
+name: My test pipeline to help Thiago
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set node version
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Disable package-lock.json because you are probably not using npmrc
+        run: npm config set package-lock false
+      - name: Install dependencies
+        run: npm Install
+      - name: FINALLY, build the project and generate the MTAR file
+        run: npm run build:mta
+      - name: Store the artifact in case u need it
+        uses: actions/upload-artifact@master
+        with:
+          name: mta
+          path: ./mta_archives/com-nickchecan-sampleapp_0.0.1.mtar
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    env:
+      CF_API: https://api.cf.us10-001.hana.ondemand.com
+      CF_ORG_NAME: 4c4667betrial
+      CF_SPACE: dev
+    steps: 
+      - name: Download stored artifact for deployment
+        uses: actions/download-artifact@master
+        with:
+          name: mta
+          path: ./
+      - name: Deploy using the sap-btp-action
+        uses: NickChecan/sap-btp-action
+        with:
+          cf_api: ${{ env.CF_API }}
+          cf_username: ${{ secrets.CF_USER }}
+          cf_password: ${{ secrets.CF_PASSWORD }}
+          cf_org: ${{ env.CF_ORG_NAME }}
+          cf_space: ${{ env.CF_SPACE }}
+          command: deploy ./com-nickchecan-sampleapp_0.0.1.mtar -f
