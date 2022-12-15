@@ -40,7 +40,7 @@ jobs:
         with:
           name: mta
           path: ./
-      - uses: NickChecan/sap-btp-action
+      - uses: NickChecan/sap-btp-action@v3
         with:
           cf_api: ${{ env.CF_API }}
           cf_username: ${{ secrets.CF_USER }}
