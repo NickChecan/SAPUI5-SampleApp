@@ -18,7 +18,7 @@ jobs:
       - name: Disable package-lock.json because you are probably not using npmrc
         run: npm config set package-lock false
       - name: Install dependencies
-        run: npm Install
+        run: npm i
       - name: FINALLY, build the project and generate the MTAR file
         run: npm run build:mta
       - name: Store the artifact in case u need it
