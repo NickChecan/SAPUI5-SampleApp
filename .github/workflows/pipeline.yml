@@ -40,8 +40,7 @@ jobs:
         with:
           name: mta
           path: ./
-      - name: Deploy using the sap-btp-action
-        uses: NickChecan/sap-btp-action
+      - uses: NickChecan/sap-btp-action
         with:
           cf_api: ${{ env.CF_API }}
           cf_username: ${{ secrets.CF_USER }}
